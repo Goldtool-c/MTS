@@ -23,7 +23,7 @@ public class WeibullGenerator implements RandomGenerator {
         double value;
         do {
             double uni = UniformGen.nextDouble(stream, 0, 1);
-            value = (shape * Math.pow(Math.log(-uni), (1.0/shift)))+delta;
+            value = (shape * Math.pow(Math.abs(Math.log(uni)), (1.0/shift)))+delta;
         } while (!(value >= start) || !(value <= end));
         return value;
     }

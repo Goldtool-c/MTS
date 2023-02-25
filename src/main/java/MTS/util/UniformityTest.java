@@ -14,10 +14,10 @@ public class UniformityTest {
         double[] z = generator.generateArray(0, 1, n1);
         int n2 = 10000;
         double[] z1 = generator.generateArray(0, 1, n2);
-        System.out.println("mean of "+ generator.getClass().getSimpleName()+" "+ SetParameters.getMean(z));
-        System.out.println("std of "+ generator.getClass().getSimpleName()+" "+ SetParameters.getStd(z));
-        System.out.println("mean of "+ generator.getClass().getSimpleName()+" "+ SetParameters.getMean(z1));
-        System.out.println("std of "+ generator.getClass().getSimpleName()+" "+ SetParameters.getStd(z1));
+        System.out.println("mean of "+ generator.getClass().getSimpleName()+" "+ SetParameters.getMean(z) + "| n =  100");
+        System.out.println("std of "+ generator.getClass().getSimpleName()+" "+ SetParameters.getStd(z)  + "| n =  100");
+        System.out.println("mean of "+ generator.getClass().getSimpleName()+" "+ SetParameters.getMean(z1)  + "| n =  10000");
+        System.out.println("std of "+ generator.getClass().getSimpleName()+" "+ SetParameters.getStd(z1)  + "| n =  10000");
         withN(z);
         withN(z1);
     }

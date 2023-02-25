@@ -3,6 +3,7 @@ package MTS;
 
 import MTS.randomGenerators.*;
 import MTS.util.HistBuilder;
+import MTS.util.UniformityTest;
 import javafx.application.Application;
 import javafx.stage.Stage;
 
@@ -13,17 +14,21 @@ public class App extends Application {
 
     @Override
     public void start(Stage stage) {
-        /*RandomGenerator normalGenerator = new NormalGenerator(2, 2);
-        double[] normal = normalGenerator.generateArray(-50, 50, 500);
-        HistBuilder.build(normal, "normal distribution");*/
-        /*RandomGenerator weibullGenerator = new WeibullGenerator(1, 1, 20);
-        double[] weibull = weibullGenerator.generateArray(-50, 50, 200);
-        HistBuilder.build(weibull, "weibull distribution");*/
-        /*RandomGenerator paretoGenerator = new ParetoGenerator(2, 7);
-        double[] pareto = paretoGenerator.generateArray(-50, 50, 200);
-        HistBuilder.build(pareto, "Pareto distribution");*/
-        RandomGenerator logNormalGenerator = new LogNormalGenerator(1, 1);
-        double[] logNormal = logNormalGenerator.generateArray(-5000, 5000, 200);
-        HistBuilder.build(logNormal, "logNormal distribution");
+        UniformityTest.test(new UniformDistributionGenerator());
+        System.out.println("__________________________________________________");
+        /*UniformityTest.test(new NormalGenerator(1, 1));
+        System.out.println("__________________________________________________");
+        UniformityTest.test(new PoissonDistributionGenerator(1));
+        System.out.println("__________________________________________________");
+        UniformityTest.test(new ParetoGenerator(1, 0));
+        System.out.println("__________________________________________________");
+        UniformityTest.test(new LogNormalGenerator(1, 1));
+        System.out.println("__________________________________________________");
+        UniformityTest.test(new ErlangDistributionGenerator(1));
+        System.out.println("__________________________________________________");
+        UniformityTest.test(new ExponentialDistributionGenerator(1));
+        System.out.println("__________________________________________________");
+        UniformityTest.test(new WeibullGenerator(1, 1, 0));
+        System.out.println("__________________________________________________");*/
     }
 }

@@ -22,7 +22,6 @@ public class LogNormalGenerator implements RandomGenerator{
         double value;
         do {
             value = generator.nextDouble();
-            System.out.println(value);
         } while (!(value >= start) || !(value <= end));
         return value;
     }

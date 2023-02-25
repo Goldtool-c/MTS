@@ -7,10 +7,11 @@ import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
 import javafx.stage.Stage;
 
+import java.text.DecimalFormat;
 import java.util.Arrays;
 
 public class HistBuilder {
-    public static void build(double[] values, String generator) {
+    public static void build(double[] values, String generator, double precision) {
         Stage stage = new Stage();
         final CategoryAxis xAxis = new CategoryAxis();
         final NumberAxis yAxis = new NumberAxis();
@@ -22,8 +23,11 @@ public class HistBuilder {
         int max = (int) (Arrays.stream(values).max().getAsDouble() + 1);
         int min = (int) (Arrays.stream(values).min().getAsDouble()-1);
         XYChart.Series ds = new XYChart.Series();
-        for (int i = min; i <= max; i++) {
-            ds.getData().add(new XYChart.Data(""+i, findInRange(values, i)));
+        double temp;
+        for (double i = min; i <= max; i=i+precision) {
+            temp = Math.round(i * 100);
+            temp = temp/100;
+            ds.getData().add(new XYChart.Data(""+temp, findInRange(values, i, precision)));
         }
         Scene scene  = new Scene(bc,800,600);
         bc.getData().addAll(ds);// помещаем ее в окно
@@ -31,10 +35,10 @@ public class HistBuilder {
         stage.show();// показываем окно
     }
 
-    private static int findInRange(double[] values, int range) {
+    private static int findInRange(double[] values, double range, double precision) {
         int counter = 0;
         for (int i = 0; i < values.length; i++) {
-            if(values[i]>=range-1&&values[i]<range)
+            if(values[i]>=range-precision&&values[i]<range)
             {
                 counter++;
             }

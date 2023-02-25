@@ -1,8 +1,9 @@
 package MTS;
 
 
-import MTS.randomGenerators.*;
-import MTS.util.HistBuilder;
+import MTS.randomGenerators.UniformDistributionGenerator;
+import MTS.util.IndependenceTesting;
+import MTS.util.UniformityTest;
 import javafx.application.Application;
 import javafx.stage.Stage;
 
@@ -13,17 +14,13 @@ public class App extends Application {
 
     @Override
     public void start(Stage stage) {
-        /*RandomGenerator normalGenerator = new NormalGenerator(2, 2);
-        double[] normal = normalGenerator.generateArray(-50, 50, 500);
-        HistBuilder.build(normal, "normal distribution");*/
-        /*RandomGenerator weibullGenerator = new WeibullGenerator(1, 1, 20);
-        double[] weibull = weibullGenerator.generateArray(-50, 50, 200);
-        HistBuilder.build(weibull, "weibull distribution");*/
-        /*RandomGenerator paretoGenerator = new ParetoGenerator(2, 7);
-        double[] pareto = paretoGenerator.generateArray(-50, 50, 200);
-        HistBuilder.build(pareto, "Pareto distribution");*/
-        RandomGenerator logNormalGenerator = new LogNormalGenerator(1, 1);
-        double[] logNormal = logNormalGenerator.generateArray(-5000, 5000, 200);
-        HistBuilder.build(logNormal, "logNormal distribution");
+        UniformDistributionGenerator generator = new UniformDistributionGenerator();
+        double[] array = generator.generateArray(0,1,100);
+        System.out.println("R = "+ IndependenceTesting.coefficientOfCorrelation(array,30) + "| n=100");
+        array = generator.generateArray(0,1,1000);
+        System.out.println("R = "+ IndependenceTesting.coefficientOfCorrelation(array,30) + "| n=1000");
+        UniformityTest.test(new UniformDistributionGenerator());
+        System.out.println("__________________________________________________");
+
     }
 }

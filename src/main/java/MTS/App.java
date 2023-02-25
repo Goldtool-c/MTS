@@ -1,9 +1,7 @@
 package MTS;
-
-
-import MTS.randomGenerators.NormalGenerator;
-import MTS.randomGenerators.RandomGenerator;
+import MTS.randomGenerators.*;
 import MTS.util.HistBuilder;
+import MTS.util.IndependenceTesting;
 import javafx.application.Application;
 import javafx.stage.Stage;
 
@@ -16,8 +14,11 @@ public class App extends Application {
 
     @Override
     public void start(Stage stage) {
-        /*RandomGenerator normalGenerator = new NormalGenerator(0, 20);
-        double[] normal = normalGenerator.generateArray(-50, 50, 50000);
-        HistBuilder.build(normal, "normal distribution");*/ // образeц
+        RandomGenerator normalGenerator = new ErlangDistributionGenerator(0.5);
+        double[] uniformDistributionGenerator = normalGenerator.generateArray(-50, 50, 500);
+        HistBuilder.build(uniformDistributionGenerator, "Erlang Distribution");
+        UniformDistributionGenerator generator = new UniformDistributionGenerator();
+        double[] array = generator.generateArray(0,1,100);
+        System.out.println("R = "+IndependenceTesting.coefficientOfCorrelation(array,30));
     }
 }

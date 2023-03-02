@@ -11,6 +11,6 @@ public class CalculateDenyProbabilityService {
             nodeProb[i] = Math.exp((-lambda)*(days*24*3600));
             result = result * nodeProb[i];
         }
-        return result;
+        return 1 - result;
     }
 }

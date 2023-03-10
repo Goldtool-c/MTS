@@ -1,9 +1,10 @@
 package MTS;
 
+import MTS.Thread.WorkLoadController;
 import MTS.entity.Flow;
 import MTS.entity.Node;
+import MTS.randomGenerators.UniformDistributionGenerator;
 import MTS.service.CalculateDenyProbabilityService;
-import MTS.util.FlowDrawer;
 import MTS.util.NodeDrawer;
 import MTS.util.NodesBuilder;
 import javafx.application.Application;
@@ -15,7 +16,6 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Circle;
 import javafx.stage.Stage;
 import org.json.simple.parser.ParseException;
 
@@ -30,17 +30,15 @@ public class App extends Application {
     }
 
     @Override
-    public void start(Stage stage) throws IOException, ParseException {
+    public void start(Stage stage) throws IOException, ParseException, InterruptedException {
         initApp();
+        UniformDistributionGenerator generator = new UniformDistributionGenerator();
         Group root = new Group();
         Scene s = new Scene(root, 800, 600);
         final Canvas canvas = new Canvas(500, 600);
         GraphicsContext gc = canvas.getGraphicsContext2D();
-        Circle[] circles = NodeDrawer.paintNodes(root, gc, nodeSet);
+        NodeDrawer.paintNodes(root, gc, new Color(0.0666, 0.94, 0.31, 1), nodeSet);
         root.getChildren().add(canvas);
-        root.getChildren().addAll(FlowDrawer.paintFlows(root, gc, flows[0]));
-        root.getChildren().addAll(FlowDrawer.paintFlows(root, gc, flows[1]));
-        root.getChildren().addAll(circles);
         TextField daysField = new TextField();
         Label label = new Label("Enter period (days)");
         label.setLabelFor(daysField);
@@ -54,14 +52,18 @@ public class App extends Application {
         output.setLayoutY(100);
         Button button = new Button();
         button.setOnAction(actionEvent -> {
-            StringBuilder sb = new StringBuilder();
-            for (int i = 0; i < flows.length; i++) {
-                sb.append("Probability of denial of\n").append(flows[i].toString()).append(" is ");
-                sb.append(CalculateDenyProbabilityService.calculate(flows[i], Double.parseDouble(daysField.getText())));
-                sb.append('\n');
-            }
-            output.setText(sb.toString());
-        }
+                    StringBuilder sb = new StringBuilder();
+                    for (Flow flow : flows) {
+                        sb.append("Probability of denial of\n").append(flow.toString()).append(" is ");
+                        sb.append(CalculateDenyProbabilityService.calculate(flow, Double.parseDouble(daysField.getText())));
+                        sb.append('\n');
+                    }
+                    output.setText(sb.toString());
+                    //todo выпилить рандом
+                    for (Node node : nodeSet) {
+                        node.setCurrentWorkload((int) generator.generate(0, 19));
+                    }
+                }
         );
         button.setText("Calculate");
         button.setLayoutX(520);
@@ -69,6 +71,9 @@ public class App extends Application {
         root.getChildren().addAll(daysField, button, output, label);
         stage.setScene(s);
         stage.show();
+        WorkLoadController controller = new WorkLoadController(gc, root, Thread.currentThread());
+        Thread controllerThread = new Thread(controller, "con");
+        controllerThread.start();
     }
 
     public static void initApp() throws IOException, ParseException {
@@ -86,6 +91,7 @@ public class App extends Application {
         flow.getNodes().add(nodes[5]);
         flow.getNodes().add(nodes[6]);
         flow.getNodes().add(nodes[11]);
+        flow.getNodes().add(nodes[8]);
         flow.getNodes().add(nodes[4]);
         flows[1] = flow;
     }

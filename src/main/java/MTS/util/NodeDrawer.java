@@ -31,7 +31,29 @@ public class NodeDrawer {
         for (int i = 0; i < nodes.length; i++) {
             gc.beginPath();
             workload = ((double)nodes[i].getCurrentWorkload())/((double)nodes[i].getMaxWorkload());
-            gc.setFill(new Color(workload, (1-workload), 0.31 * (1-workload),  1));
+            double red = workload;
+            double green = (1-workload);
+            double blue = 0.31 * (1-workload);
+            if (red < 0){
+                red = 0;
+            }
+            if (red > 1){
+                red = 1;
+            }
+            if (green < 0){
+                green = 0;
+            }
+            if (green > 1){
+                green = 1;
+            }
+            if (blue < 0){
+                blue = 0;
+            }
+            if (blue > 1){
+                blue = 1;
+            }
+
+            gc.setFill(new Color(red, green, blue,  1));
             gc.strokeText(nodes[i].getId()+"", nodes[i].getX()-3, nodes[i].getY()-15);
             gc.strokeOval(nodes[i].getX()-12, nodes[i].getY()-12, 24, 24);
             gc.fillOval(nodes[i].getX()-12, nodes[i].getY()-12, 24, 24);

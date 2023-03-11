@@ -1,5 +1,6 @@
 package MTS;
 
+import MTS.Thread.PackageCourier;
 import MTS.Thread.WorkLoadController;
 import MTS.entity.Flow;
 import MTS.entity.Node;
@@ -60,9 +61,9 @@ public class App extends Application {
                     }
                     output.setText(sb.toString());
                     //todo выпилить рандом
-                    for (Node node : nodeSet) {
-                        node.setCurrentWorkload((int) generator.generate(0, 19));
-                    }
+                    PackageCourier courier = new PackageCourier(flows[0], 6);
+                    Thread courierThread = new Thread(courier);
+                    courierThread.start();
                 }
         );
         button.setText("Calculate");

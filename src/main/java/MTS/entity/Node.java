@@ -10,6 +10,8 @@ import java.util.Objects;
 @Data
 @NoArgsConstructor
 public class Node implements Cloneable {
+
+    private boolean semaphore = false;
     private int id;
     private double x;
     private double y;
@@ -62,8 +64,13 @@ public class Node implements Cloneable {
         nodeLinkedTo.add(this);
     }
 
-    public void addWorkload(int packages) {
-        currentWorkload = currentWorkload + packages;
+    public int addWorkload(int packages) {
+        int res = packages;
+        if(currentWorkload + packages>maxWorkload){
+            res = maxWorkload - currentWorkload;
+        }
+        currentWorkload = Math.min(currentWorkload + packages, maxWorkload);
+        return res;
     }
 
     public int processWorkload() {
@@ -76,6 +83,22 @@ public class Node implements Cloneable {
             currentWorkload = 0;
             return res;
         }
+    }
+
+    public synchronized int getCurrentWorkload() {
+        return currentWorkload;
+    }
+
+    public synchronized void setCurrentWorkload(int currentWorkload) {
+        this.currentWorkload = currentWorkload;
+    }
+
+    public synchronized boolean isSemaphore() {
+        return semaphore;
+    }
+
+    public synchronized void setSemaphore(boolean semaphore) {
+        this.semaphore = semaphore;
     }
 
     @Override

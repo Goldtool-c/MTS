@@ -1,5 +1,6 @@
 package MTS;
 
+import MTS.Thread.PacketSender;
 import MTS.Thread.PackageCourier;
 import MTS.Thread.WorkLoadController;
 import MTS.entity.Flow;
@@ -69,7 +70,17 @@ public class App extends Application {
         button.setText("Calculate");
         button.setLayoutX(520);
         button.setLayoutY(75);
-        root.getChildren().addAll(daysField, button, output, label);
+        Button packageButton = new Button();// кнопка для запуска рандомных пакетов
+        packageButton.setOnAction(actionEvent -> {
+                    PacketSender newpackage = new PacketSender(flows[1]);
+                    Thread packegeThread = new Thread(newpackage);
+                    packegeThread.start();
+                }
+        );
+        packageButton.setText("Start");
+        packageButton.setLayoutX(520);
+        packageButton.setLayoutY(170);
+        root.getChildren().addAll(daysField,button, packageButton, output, label);
         stage.setScene(s);
         stage.show();
         WorkLoadController controller = new WorkLoadController(gc, root, Thread.currentThread());

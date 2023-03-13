@@ -12,6 +12,7 @@ public class PackageCourier implements Runnable{
     }
     @Override
     public void run() {
+        int startPackages = packages;
         flow.getNodes().get(0).addWorkload(packages);
         for (int i = 0; i < flow.getNodes().size()-1; i++) {
             synchronized (this){
@@ -33,7 +34,7 @@ public class PackageCourier implements Runnable{
             packages =
                     flow.getNodes().get(i+1).addWorkload(packages);
         }
-        System.out.println("packages received: "+packages);
+        System.out.println("packages sent: "+startPackages+" | packages received: "+packages);
         synchronized (this){
             try {
                 wait(2000);

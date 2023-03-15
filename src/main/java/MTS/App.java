@@ -7,6 +7,7 @@ import MTS.entity.Flow;
 import MTS.entity.Node;
 import MTS.randomGenerators.UniformDistributionGenerator;
 import MTS.service.CalculateDenyProbabilityService;
+import MTS.service.FindBestRoute;
 import MTS.util.NodeDrawer;
 import MTS.util.NodesBuilder;
 import javafx.application.Application;
@@ -72,7 +73,7 @@ public class App extends Application {
         button.setLayoutY(75);
         Button packageButton = new Button();// кнопка для запуска рандомных пакетов
         packageButton.setOnAction(actionEvent -> {
-                    PacketSender newpackage = new PacketSender(flows[1]);
+                    PacketSender newpackage = new PacketSender(FindBestRoute.find());
                     Thread packegeThread = new Thread(newpackage);
                     packegeThread.start();
                 }

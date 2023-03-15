@@ -3,6 +3,7 @@ package MTS.Thread;
 import MTS.entity.Flow;
 import MTS.randomGenerators.ErlangDistributionGenerator;
 import MTS.randomGenerators.PoissonDistributionGenerator;
+import MTS.service.FindBestRoute;
 
 public class PacketSender implements Runnable{
 
@@ -23,7 +24,7 @@ public class PacketSender implements Runnable{
         while (isActive){
         PoissonDistributionGenerator packageGenerator = new PoissonDistributionGenerator(7);
         int numberOfPackages = (int)packageGenerator.generate(1,100); // генерим количество пакетов
-        PackageCourier addPackeges = new PackageCourier(flow,numberOfPackages);
+        PackageCourier addPackeges = new PackageCourier(FindBestRoute.find(),numberOfPackages);
             Thread courier = new Thread(addPackeges);
             courier.start();
             synchronized (this){

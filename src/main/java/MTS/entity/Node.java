@@ -16,7 +16,7 @@ public class Node implements Cloneable {
     private double x;
     private double y;
     private List<Node> linkedTo = new LinkedList<>();
-
+    private double errorProb;
     private int currentWorkload;
 
     private int maxWorkload;

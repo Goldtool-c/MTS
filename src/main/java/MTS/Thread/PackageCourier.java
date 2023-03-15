@@ -2,6 +2,10 @@ package MTS.Thread;
 
 import MTS.entity.Flow;
 import MTS.entity.Node;
+import MTS.randomGenerators.RandomGenerator;
+import MTS.randomGenerators.UniformDistributionGenerator;
+
+import java.util.Random;
 
 public class PackageCourier implements Runnable{
     private Flow flow;
@@ -13,6 +17,15 @@ public class PackageCourier implements Runnable{
     @Override
     public void run() {
         int startPackages = packages;
+        Random random = new Random();
+        for (int i = 0; i < flow.getNodes().size(); i++) {
+            double errorProb = flow.getNodes().get(i).getErrorProb();
+            if(errorProb*10000000>=random.nextInt(100000)){
+                System.out.println("Error occurred: package lost");
+                packages = packages - 1;
+            }
+        }
+        //if(errorProb*10000000<=new UniformDistributionGenerator().generate(0, 100000))
         flow.getNodes().get(0).addWorkload(packages);
         for (int i = 0; i < flow.getNodes().size()-1; i++) {
             synchronized (this){

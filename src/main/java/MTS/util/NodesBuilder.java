@@ -25,6 +25,7 @@ public class NodesBuilder {
             node.setY((double) nodeJSON.get("y"));
             node.setOperatingPeriod((double) nodeJSON.get("operatingPeriod"));
             node.setMaxWorkload(((Long) nodeJSON.get("maxWorkload")).intValue());
+            node.setErrorProb((double) nodeJSON.get("errorProb"));
             node.setId(((Long) nodeJSON.get("id")).intValue());
             nodes[i] = node;
         }

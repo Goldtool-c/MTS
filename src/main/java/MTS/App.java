@@ -22,6 +22,7 @@ import javafx.stage.Stage;
 import org.json.simple.parser.ParseException;
 
 import java.io.IOException;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class App extends Application {
     public static Node[] nodeSet;
@@ -71,16 +72,27 @@ public class App extends Application {
         button.setLayoutX(520);
         button.setLayoutY(75);
         Button packageButton = new Button();// кнопка для запуска рандомных пакетов
+        PacketSender newpackage = new PacketSender(flows[1]);
+        AtomicReference<Thread> packegeThread = new AtomicReference<>(new Thread(newpackage));
         packageButton.setOnAction(actionEvent -> {
-                    PacketSender newpackage = new PacketSender(flows[1]);
-                    Thread packegeThread = new Thread(newpackage);
-                    packegeThread.start();
+                  packegeThread.set(new Thread(newpackage));
+                  newpackage.disable(true);
+                  packegeThread.get().start();
                 }
         );
         packageButton.setText("Start");
         packageButton.setLayoutX(520);
         packageButton.setLayoutY(170);
-        root.getChildren().addAll(daysField,button, packageButton, output, label);
+        Button packageButtonDisable = new Button();// кнопка для остановки рандомных пакетов
+        packageButtonDisable.setOnAction(actionEvent -> {
+                    newpackage.disable(false);
+                    packegeThread.get().stop();
+                }
+        );
+        packageButtonDisable.setText("Disable");
+        packageButtonDisable.setLayoutX(570);
+        packageButtonDisable.setLayoutY(170);
+        root.getChildren().addAll(daysField,button,packageButtonDisable, packageButton, output, label);
         stage.setScene(s);
         stage.show();
         WorkLoadController controller = new WorkLoadController(gc, root, Thread.currentThread());
@@ -106,5 +118,20 @@ public class App extends Application {
         flow.getNodes().add(nodes[8]);
         flow.getNodes().add(nodes[4]);
         flows[1] = flow;
+        flow = new Flow();
+        flow.getNodes().add(nodes[4]);
+        flow.getNodes().add(nodes[3]);
+        flow.getNodes().add(nodes[2]);
+        flow.getNodes().add(nodes[1]);
+        flow.getNodes().add(nodes[0]);
+        flows[2] = flow;
+        flow = new Flow();
+        flow.getNodes().add(nodes[4]);
+        flow.getNodes().add(nodes[8]);
+        flow.getNodes().add(nodes[11]);
+        flow.getNodes().add(nodes[6]);
+        flow.getNodes().add(nodes[5]);
+        flow.getNodes().add(nodes[0]);
+        flows[3] = flow;
     }
 }

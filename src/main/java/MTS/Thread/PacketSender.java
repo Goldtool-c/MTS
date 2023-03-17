@@ -8,10 +8,10 @@ public class PacketSender implements Runnable{
 
     private Flow flow;
 
-    private boolean isActive = true;
+    private boolean isActive ;
 
-    void disable(){ // включить выключить поток
-        this.isActive=false;
+    public void disable(boolean status){ // включить выключить поток
+        this.isActive=status;
     }
 
     public PacketSender(Flow flow){

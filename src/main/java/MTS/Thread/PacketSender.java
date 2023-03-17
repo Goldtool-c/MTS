@@ -1,8 +1,8 @@
 package MTS.Thread;
 
 import MTS.entity.Flow;
-import MTS.randomGenerators.ErlangDistributionGenerator;
-import MTS.randomGenerators.PoissonDistributionGenerator;
+import MTS.randomGenerators.*;
+import MTS.service.FindBestRoute;
 
 public class PacketSender implements Runnable{
 
@@ -21,9 +21,14 @@ public class PacketSender implements Runnable{
     @Override
     public void run() {
         while (isActive){
-        PoissonDistributionGenerator packageGenerator = new PoissonDistributionGenerator(7);
-        int numberOfPackages = (int)packageGenerator.generate(1,100); // генерим количество пакетов
-        PackageCourier addPackeges = new PackageCourier(flow,numberOfPackages);
+        //PoissonDistributionGenerator packageGenerator = new PoissonDistributionGenerator(7);
+            UniformDistributionGenerator packageGenerator = new UniformDistributionGenerator();// равномерное
+            LogNormalGenerator logNormalGenerator = new LogNormalGenerator(0.5,0.5);//лог нормальное
+            ExponentialDistributionGenerator exponentialDistributionGenerator = new ExponentialDistributionGenerator(1.5);
+            //int numberOfPackages = (int)packageGenerator.generate(1,100); // генерим количество пакетов
+            //int numberOfPackages = (int)logNormalGenerator.generate(1,100);
+           int numberOfPackages = (int)exponentialDistributionGenerator.generate(1,100);
+            PackageCourier addPackeges = new PackageCourier(FindBestRoute.find(),numberOfPackages);
             Thread courier = new Thread(addPackeges);
             courier.start();
             synchronized (this){

@@ -7,6 +7,7 @@ import MTS.entity.Flow;
 import MTS.entity.Node;
 import MTS.randomGenerators.UniformDistributionGenerator;
 import MTS.service.CalculateDenyProbabilityService;
+import MTS.service.FindBestRoute;
 import MTS.util.NodeDrawer;
 import MTS.util.NodesBuilder;
 import javafx.application.Application;
@@ -26,7 +27,7 @@ import java.util.concurrent.atomic.AtomicReference;
 
 public class App extends Application {
     public static Node[] nodeSet;
-    public static Flow[] flows = new Flow[2];
+    public static Flow[] flows = new Flow[4];
 
     public static void main(String[] args) {
         launch(args);
@@ -72,7 +73,7 @@ public class App extends Application {
         button.setLayoutX(520);
         button.setLayoutY(75);
         Button packageButton = new Button();// кнопка для запуска рандомных пакетов
-        PacketSender newpackage = new PacketSender(flows[1]);
+        PacketSender newpackage = new PacketSender(flows[2]);
         AtomicReference<Thread> packegeThread = new AtomicReference<>(new Thread(newpackage));
         packageButton.setOnAction(actionEvent -> {
                   packegeThread.set(new Thread(newpackage));

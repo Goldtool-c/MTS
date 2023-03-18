@@ -1,9 +1,13 @@
 package MTS;
 
+import MTS.Thread.PacketSender;
+import MTS.Thread.PackageCourier;
+import MTS.Thread.WorkLoadController;
 import MTS.entity.Flow;
 import MTS.entity.Node;
+import MTS.randomGenerators.UniformDistributionGenerator;
 import MTS.service.CalculateDenyProbabilityService;
-import MTS.util.FlowDrawer;
+import MTS.service.FindBestRoute;
 import MTS.util.NodeDrawer;
 import MTS.util.NodesBuilder;
 import javafx.application.Application;
@@ -15,32 +19,30 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Circle;
 import javafx.stage.Stage;
 import org.json.simple.parser.ParseException;
 
 import java.io.IOException;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class App extends Application {
     public static Node[] nodeSet;
-    public static Flow[] flows = new Flow[2];
+    public static Flow[] flows = new Flow[4];
 
     public static void main(String[] args) {
         launch(args);
     }
 
     @Override
-    public void start(Stage stage) throws IOException, ParseException {
+    public void start(Stage stage) throws IOException, ParseException, InterruptedException {
         initApp();
+        UniformDistributionGenerator generator = new UniformDistributionGenerator();
         Group root = new Group();
         Scene s = new Scene(root, 800, 600);
         final Canvas canvas = new Canvas(500, 600);
         GraphicsContext gc = canvas.getGraphicsContext2D();
-        Circle[] circles = NodeDrawer.paintNodes(root, gc, nodeSet);
+        NodeDrawer.paintNodes(root, gc, new Color(0.0666, 0.94, 0.31, 1), nodeSet);
         root.getChildren().add(canvas);
-        root.getChildren().addAll(FlowDrawer.paintFlows(root, gc, flows[0]));
-        root.getChildren().addAll(FlowDrawer.paintFlows(root, gc, flows[1]));
-        root.getChildren().addAll(circles);
         TextField daysField = new TextField();
         Label label = new Label("Enter period (days)");
         label.setLabelFor(daysField);
@@ -54,21 +56,49 @@ public class App extends Application {
         output.setLayoutY(100);
         Button button = new Button();
         button.setOnAction(actionEvent -> {
-            StringBuilder sb = new StringBuilder();
-            for (int i = 0; i < flows.length; i++) {
-                sb.append("Probability of denial of\n").append(flows[i].toString()).append(" is ");
-                sb.append(CalculateDenyProbabilityService.calculate(flows[i], Double.parseDouble(daysField.getText())));
-                sb.append('\n');
-            }
-            output.setText(sb.toString());
-        }
+                    StringBuilder sb = new StringBuilder();
+                    for (Flow flow : flows) {
+                        sb.append("Probability of denial of\n").append(flow.toString()).append(" is ");
+                        sb.append(CalculateDenyProbabilityService.calculate(flow, Double.parseDouble(daysField.getText())));
+                        sb.append('\n');
+                    }
+                    output.setText(sb.toString());
+                    //todo выпилить рандом
+                    PackageCourier courier = new PackageCourier(flows[0], 6);
+                    Thread courierThread = new Thread(courier);
+                    courierThread.start();
+                }
         );
         button.setText("Calculate");
         button.setLayoutX(520);
         button.setLayoutY(75);
-        root.getChildren().addAll(daysField, button, output, label);
+        Button packageButton = new Button();// кнопка для запуска рандомных пакетов
+        PacketSender newpackage = new PacketSender(flows[2]);
+        AtomicReference<Thread> packegeThread = new AtomicReference<>(new Thread(newpackage));
+        packageButton.setOnAction(actionEvent -> {
+                  packegeThread.set(new Thread(newpackage));
+                  newpackage.disable(true);
+                  packegeThread.get().start();
+                }
+        );
+        packageButton.setText("Start");
+        packageButton.setLayoutX(520);
+        packageButton.setLayoutY(170);
+        Button packageButtonDisable = new Button();// кнопка для остановки рандомных пакетов
+        packageButtonDisable.setOnAction(actionEvent -> {
+                    newpackage.disable(false);
+                    packegeThread.get().stop();
+                }
+        );
+        packageButtonDisable.setText("Disable");
+        packageButtonDisable.setLayoutX(570);
+        packageButtonDisable.setLayoutY(170);
+        root.getChildren().addAll(daysField,button,packageButtonDisable, packageButton, output, label);
         stage.setScene(s);
         stage.show();
+        WorkLoadController controller = new WorkLoadController(gc, root, Thread.currentThread());
+        Thread controllerThread = new Thread(controller, "con");
+        controllerThread.start();
     }
 
     public static void initApp() throws IOException, ParseException {
@@ -86,7 +116,23 @@ public class App extends Application {
         flow.getNodes().add(nodes[5]);
         flow.getNodes().add(nodes[6]);
         flow.getNodes().add(nodes[11]);
+        flow.getNodes().add(nodes[8]);
         flow.getNodes().add(nodes[4]);
         flows[1] = flow;
+        flow = new Flow();
+        flow.getNodes().add(nodes[4]);
+        flow.getNodes().add(nodes[3]);
+        flow.getNodes().add(nodes[2]);
+        flow.getNodes().add(nodes[1]);
+        flow.getNodes().add(nodes[0]);
+        flows[2] = flow;
+        flow = new Flow();
+        flow.getNodes().add(nodes[4]);
+        flow.getNodes().add(nodes[8]);
+        flow.getNodes().add(nodes[11]);
+        flow.getNodes().add(nodes[6]);
+        flow.getNodes().add(nodes[5]);
+        flow.getNodes().add(nodes[0]);
+        flows[3] = flow;
     }
 }

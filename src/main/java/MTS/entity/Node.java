@@ -9,11 +9,17 @@ import java.util.Objects;
 
 @Data
 @NoArgsConstructor
-public class Node {
+public class Node implements Cloneable {
+
+    private boolean semaphore = false;
     private int id;
     private double x;
     private double y;
     private List<Node> linkedTo = new LinkedList<>();
+    private double errorProb;
+    private int currentWorkload;
+
+    private int maxWorkload;
 
     private double operatingPeriod;
 
@@ -42,15 +48,15 @@ public class Node {
         }
     }
 
-    public void connectNode(Node node){
+    public void connectNode(Node node) {
         List<Node> nodeLinkedTo = node.linkedTo;
         for (int i = 0; i < linkedTo.size(); i++) {
-            if(node.getId()==this.id){
+            if (node.getId() == this.id) {
                 return;
             }
         }
         for (int i = 0; i < nodeLinkedTo.size(); i++) {
-            if(node.getId()==this.id){
+            if (node.getId() == this.id) {
                 return;
             }
         }
@@ -58,10 +64,47 @@ public class Node {
         nodeLinkedTo.add(this);
     }
 
+    public int addWorkload(int packages) {
+        int res = packages;
+        if(currentWorkload + packages>maxWorkload){
+            res = maxWorkload - currentWorkload;
+        }
+        currentWorkload = Math.min(currentWorkload + packages, maxWorkload);
+        return res;
+    }
+
+    public int processWorkload() {
+        int res;
+        if (currentWorkload >= maxWorkload) {
+            currentWorkload = 0;
+            return maxWorkload;
+        } else {
+            res = currentWorkload;
+            currentWorkload = 0;
+            return res;
+        }
+    }
+
+    public synchronized int getCurrentWorkload() {
+        return currentWorkload;
+    }
+
+    public synchronized void setCurrentWorkload(int currentWorkload) {
+        this.currentWorkload = currentWorkload;
+    }
+
+    public synchronized boolean isSemaphore() {
+        return semaphore;
+    }
+
+    public synchronized void setSemaphore(boolean semaphore) {
+        this.semaphore = semaphore;
+    }
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        sb.append(" {");
+        sb.append("{");
         for (int i = 0; i < linkedTo.size(); i++) {
             sb.append(linkedTo.get(i).getId());
             sb.append(", ");
@@ -70,6 +113,7 @@ public class Node {
                 "id=" + id +
                 ", x=" + x +
                 ", y=" + y +
+                ", currentWorkload = " + currentWorkload +
                 ", linkedTo=" + sb +
                 '}';
     }
@@ -77,5 +121,24 @@ public class Node {
     @Override
     public int hashCode() {
         return Objects.hash(id, x, y);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Node node = (Node) o;
+        return id == node.id && Double.compare(node.x, x) == 0 && Double.compare(node.y, y) == 0 && currentWorkload == node.currentWorkload && maxWorkload == node.maxWorkload;
+    }
+
+    @Override
+    public Node clone() {
+        Node clone = new Node();
+        clone.setId(id);
+        clone.setX(x);
+        clone.setY(y);
+        clone.setMaxWorkload(maxWorkload);
+        clone.setCurrentWorkload(currentWorkload);
+        return clone;
     }
 }

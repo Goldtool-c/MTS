@@ -3,10 +3,7 @@ package MTS.entity;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @Data
 @NoArgsConstructor
@@ -23,5 +20,23 @@ public class Flow {
         }
         return "Flow{" +sb+
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Flow flow = (Flow) o;
+        boolean flag = true;
+        if (nodes.size()!=((Flow) o).nodes.size()) return false;
+        for (int i = 0; i < nodes.size(); i++) {
+            if (nodes.get(i).getId()!=((Flow) o).getNodes().get(i).getId()) return false;
+        }
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(nodes);
     }
 }

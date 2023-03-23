@@ -9,7 +9,7 @@ public class FindBestRoute {
         Flow res = App.flows[0];
         double mark = 0;
         System.out.println("==============================================");
-        for (int i = 2; i < App.flows.length; i++) {
+        for (int i = 0; i < App.flows.length-2; i++) {
             if(EIGRPMark.calculateMark(App.flows[i])>mark){
                 res = App.flows[i];
                 mark = EIGRPMark.calculateMark(App.flows[i]);

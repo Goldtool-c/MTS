@@ -1,5 +1,6 @@
 package MTS;
 
+import MTS.Thread.ICMP;
 import MTS.Thread.PacketSender;
 import MTS.Thread.PackageCourier;
 import MTS.Thread.WorkLoadController;
@@ -76,9 +77,12 @@ public class App extends Application {
         PacketSender newpackage = new PacketSender(flows[2]);
         AtomicReference<Thread> packegeThread = new AtomicReference<>(new Thread(newpackage));
         packageButton.setOnAction(actionEvent -> {
-                  packegeThread.set(new Thread(newpackage));
+                 /* packegeThread.set(new Thread(newpackage));
                   newpackage.disable(true);
-                  packegeThread.get().start();
+                  packegeThread.get().start();*/
+                    ICMP icmp = new ICMP();
+                    Thread h = new Thread(icmp);
+                    h.start();
                 }
         );
         packageButton.setText("Start");
@@ -93,7 +97,7 @@ public class App extends Application {
         packageButtonDisable.setText("Disable");
         packageButtonDisable.setLayoutX(570);
         packageButtonDisable.setLayoutY(170);
-        root.getChildren().addAll(daysField,button,packageButtonDisable, packageButton, output, label);
+        root.getChildren().addAll(daysField, button, packageButtonDisable, packageButton, output, label);
         stage.setScene(s);
         stage.show();
         WorkLoadController controller = new WorkLoadController(gc, root, Thread.currentThread());

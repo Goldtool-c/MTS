@@ -22,8 +22,8 @@ public class PacketSender implements Runnable{
     public void run() {
         while (isActive){
         //PoissonDistributionGenerator packageGenerator = new PoissonDistributionGenerator(7);
-            UniformDistributionGenerator packageGenerator = new UniformDistributionGenerator();// равномерное
-            LogNormalGenerator logNormalGenerator = new LogNormalGenerator(0.5,0.5);//лог нормальное
+            //UniformDistributionGenerator packageGenerator = new UniformDistributionGenerator();// равномерное
+            //LogNormalGenerator logNormalGenerator = new LogNormalGenerator(0.5,0.5);//лог нормальное
             ExponentialDistributionGenerator exponentialDistributionGenerator = new ExponentialDistributionGenerator(1.5);
             //int numberOfPackages = (int)packageGenerator.generate(1,100); // генерим количество пакетов
             //int numberOfPackages = (int)logNormalGenerator.generate(1,100);
